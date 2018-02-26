@@ -1,47 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 int todecimal(string b,int length);
-
-void showqueue(queue <int> gq)
-{
-    cout <<"the queue is : ";
-    queue <int> g = gq;
-    while (!g.empty())
-    {
-        cout << g.front()<< '\t' ;
-        g.pop();
-    }
-    cout << '\n';
-}
-
 char convert(string letter)
 {
-    string data = letter;
-    stringstream sstream(data);
-    char output;
-    while(sstream.good())
-    {
-        bitset<8> bits;
-        sstream >> bits;
-        char c = char(bits.to_ulong());
-        output += c;
-    }
-    return output;
+    bitset<8> temp(letter);
+    return temp.to_ulong();
 }
-
-void showqueuestring(queue <string> gq)
-{
-    cout <<"the queue is : ";
-    queue <string> g = gq;
-    while (!g.empty())
-    {
-        cout << g.front()<< '\t' ;
-        g.pop();
-    }
-    cout << '\n';
-}
-
-
 int main()
 {
     string s,bits,txtfilename = "../Name list compression/bits.txt";
@@ -56,10 +20,8 @@ int main()
     {
         getline(in, s);
         bits += s;
-        //lines ++;
     }
     int length =bits.length()/4;
-
     string reno,arr[length];
     int sndarr[length];
     queue <int> numbers;
@@ -78,11 +40,9 @@ int main()
         sndarr[i] = todecimal(arr[i],4);
     }
     int temp=0;
-
     for (int i=0; i<length; i++)
     {
         temp+=sndarr[i];
-
         if (sndarr[i]==15)
         {
             continue;
@@ -90,7 +50,6 @@ int main()
         numbers.push( temp);
         temp=0;
     }
-    //showqueue(numbers);
     int looper;
     string binstr;
     char les='1', most='0';
@@ -103,21 +62,19 @@ int main()
         numbers.pop();
     }
     binstr.pop_back();
-    //cout<<binstr;
+    
     string letter;
-    char chart;
     queue <string> letters;
     for (int i=0; i<binstr.length(); i+=8)
     {
         letter="";
-        for(int j=0; j<8;j++)
+        for(int j=0; j<8; j++)
         {
             letter+=binstr[i+j];
         }
         letters.push(letter);
     }
     queue <char> chars;
-    showqueuestring (letters);
     while (!letters.empty())
     {
         chars.push(convert(letters.front()));
@@ -128,15 +85,27 @@ int main()
     char c;
     while (!chars.empty())
     {
-        word=chars.front();
         c = chars.front();
         if (isupper(c))
-        words.push(word);
+        {
+            if (word =="") word=c;
+            words.push(word);
+            word="";
+        }
         else
-        word+=chars.front();
+        {
+            word+=chars.front();
+        }
         chars.pop();
     }
-    showqueuestring (words);
+    ofstream newnames;
+    newnames.open("new-names.txt");
+    newnames.clear();
+    while (!words.empty())
+    {
+        newnames << words.front()<<"\n";
+        words.pop();
+    }
     cout <<"finished"<<endl;
     return 0;
 }
